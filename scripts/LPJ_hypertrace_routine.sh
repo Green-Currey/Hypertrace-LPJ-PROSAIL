@@ -17,14 +17,14 @@ module load  anaconda/py3.9
 # run this script with the month number after it!
 export isofit_scripts='/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/scripts/py_scripts'
 ## end testing ##
-year=2022
-stream='DR'
-sims=lpj_prosail_v21
-rflName="lpj-prosail_levelC_${stream}_version021_m_$year.nc"
-py_scripts=$isofit_scripts
-hypertraceDir='/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL'
+export year=2022
+export stream='DR'
+export sims=lpj_prosail_v21
+export rflName="lpj-prosail_levelC_${stream}_version021_m_$year.nc"
+export py_scripts=$isofit_scripts
+export hypertraceDir='/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL'
 export ncdfDir="/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/$sims/ncdf_outputs/"
-month=$1
+export month=$1
 export reflectancePath="$ncdfDir/$rflName"
 export configPath="$hypertraceDir/configs/LPJ_basic_config.json"
 export surfacePath="$hypertraceDir/surface/LPJ_basic_surface.json"
