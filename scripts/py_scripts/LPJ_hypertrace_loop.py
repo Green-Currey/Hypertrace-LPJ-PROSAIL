@@ -51,7 +51,7 @@ outfiletype = 'netcdf'
 # # Debug
 surface_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/LPJ_basic_surface.json"
 config_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/configs/LPJ_basic_config.json"
-reflectance_file = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/lpj-prosail_levelC_DR_version021_m_2022.nc"
+reflectance_file = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/lpj-prosail_levelC_DR_version021_m_2016.nc"
 output_dir = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/"
 merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final'
 month = 7
