@@ -31,10 +31,9 @@ surface_json = os.getenv("surfacePath")
 config_json = os.getenv("configPath")
 reflectance_file = os.getenv("reflectancePath")
 output_dir = os.getenv("ncdfDir")
-merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final'
+merra_dir = os.getenv("merraDir")
 month = sys.argv[1]
 mode = os.getenv("hypertraceOrRadiance")
-outfiletype = 'netcdf'
 
 # # Debug
 # surface_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/LPJ_basic_surface.json"
@@ -44,7 +43,6 @@ outfiletype = 'netcdf'
 # merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final'
 # month = 8
 # mode = 'hypertrace'
-# outfiletype = 'netcdf'
 
 
 # init info --------------------------------------------------------
@@ -90,12 +88,7 @@ print("Reflectance: ", var, "\nVersion: ", version, "\nMonth: ", month, "\nYear:
 
 
 # check if file exists ---------------------------------------------
-
-if outfiletype == 'ENVI': # if ENVI output file is desired
-    rdn_name = 'lpj-prosail_levelD_TOA-radiance_' + version + '_'+str(month)+'_' + str(year)
-else: 
-    rdn_name = 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc'
-
+rdn_name = 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc'
 
 if os.path.exists(join(output_dir, rdn_name)):
     print(rdn_name, "file already exists.")

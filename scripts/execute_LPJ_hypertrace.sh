@@ -16,6 +16,7 @@ export surfacePath=$surfacePath
 export configPath=$configPath
 export reflectancePath=$reflectancePath
 export ncdfDir=$ncdfDir
+export merraDir=$merraDir
 export month=$1
 export hypertraceOrRadiance=$hypertraceOrRadiance
 
