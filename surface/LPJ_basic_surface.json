@@ -1,12 +1,12 @@
 {
-    "output_model_file": "/discover/nobackup/bcurrey/hypertrace_simulations/surface/LPJ_basic_surface.mat",
-    "wavelength_file":   "/discover/nobackup/bcurrey/hypertrace_simulations/data/LPJ_wavelengths.txt",
+    "output_model_file": "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/LPJ_basic_surface.mat",
+    "wavelength_file":   "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/data/LPJ_wavelengths.txt",
     "normalize":"Euclidean",
     "reference_windows":[[400,1300],[1450,1700],[2100,2450]],
     "sources":
     [
         {
-            "input_spectrum_files":["/discover/nobackup/bcurrey/hypertrace_simulations/surface/surface_model_ucsb"],
+            "input_spectrum_files":["/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/surface_model_ucsb"],
             "n_components": 8,
             "windows": [
                 {

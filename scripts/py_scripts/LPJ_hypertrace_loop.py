@@ -1,7 +1,6 @@
 # Bryce Currey
-# Last modified: 03/28/2023
+# Last modified: 10/02/2023
 # Hypertrace routine function for looping through LPJ reflectances using MERRA2 atmospheric data
-# The function is called in run_LPJ_hypertrace.py
 
 
 
@@ -28,17 +27,6 @@ from isofit.utils import surface_model
 
 
 # function definition --------------------------------------------
-# def LPJ_hypertrace_routine (
-#         surface_json, # /discover/nobackup/bcurrey/hypertrace_sims/surface/LPJ_basic_surface.json
-#         config_json, # /discover/nobackup/bcurrey/hypertrace_sims/configs/LPJ_basic_surface.json
-#         reflectance_file, # e.g., /discover/nobackup/projects/SBG-DO/lpj-prosail/version2/lpj-prosail_levelC_HDR_version2a_m_2021.nc
-#         output_dir = '/discover/nobackup/projects/SBG-DO/lpj-prosail/version3',
-#         merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final',
-#         month = 7, # 1-12 for Jan - Dec
-#         outfiletype = 'netcdf', # options: ENVI or netcdf
-#         mode = 'hypertrace' # options: radiances or hypertrace, which outputs radiances and retrievals
-#         ):
-
 surface_json = os.getenv("surfacePath")
 config_json = os.getenv("configPath")
 reflectance_file = os.getenv("reflectancePath")
@@ -49,14 +37,14 @@ mode = os.getenv("hypertraceOrRadiance")
 outfiletype = 'netcdf'
 
 # # Debug
-surface_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/LPJ_basic_surface.json"
-config_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/configs/LPJ_basic_config.json"
-reflectance_file = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/lpj-prosail_levelC_DR_version021_m_2016.nc"
-output_dir = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/"
-merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final'
-month = 7
-mode = 'hypertrace'
-outfiletype = 'netcdf'
+# surface_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/LPJ_basic_surface.json"
+# config_json = "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/configs/LPJ_basic_config.json"
+# reflectance_file = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/lpj-prosail_levelC_DR_Version021_m_2016.nc"
+# output_dir = "/discover/nobackup/projects/SBG-DO/bcurrey/global_run_simulations/lpj_prosail_v21/ncdf_outputs/"
+# merra_dir = '/discover/nobackup/projects/SBG-DO/bcurrey/MERRA2/final'
+# month = 8
+# mode = 'hypertrace'
+# outfiletype = 'netcdf'
 
 
 # init info --------------------------------------------------------
@@ -114,7 +102,7 @@ if os.path.exists(join(output_dir, rdn_name)):
 
 
 lpj = xr.open_dataset(reflectance_file, decode_times=False).sel(time=int(month)-1)
-wl = lpj.wavelength.values; # wavelengths
+wl = lpj.wl.values; # wavelengths
 rfl = lpj[var].values.transpose(1,2,0);     # transposes to row,col,band or lat,lon,wl (aka BIP)
 lat, lon, bands = rfl.shape;
 print('data dimensions: ', rfl.shape);
@@ -189,56 +177,45 @@ if mode =='hypertrace':
 # rtr name: lpj-prosail_levelE_retrieved-HDR_version3a_m_2021.nc
 
 
-# output ENVI --------------------------------------------
-if outfiletype == 'ENVI': # if ENVI output file is desired
-    rdn_out = join(output_dir, 'lpj-prosail_levelD_TOA-radiance_' + version + '_'+str(month)+'_' + str(year))
-    envi.save_image(rdn_out, lpj_rdn);
-
-    if modei == 'hypertrace':
-        rtr_out = join(output_dir, 'Retrievals', 'lpj-prosail_levelE_retrieved-HDR_' + version + '_' + str(month) + '_' + str(year));
-        envi.save_image(rdn_out, lpj_rtr);
-
-
 # output ncdf -----------------------------------------------
-else: # else NCDF is output (default)
-    rdn_out = join(output_dir, 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc');
-    rdn_out_nc = nc.Dataset(rdn_out, 'a'); 
+rdn_out = join(output_dir, 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc');
+rdn_out_nc = nc.Dataset(rdn_out, 'a'); 
+
+# create dimensions
+rdn_out_nc.createDimension('lon', lon);
+rdn_out_nc.createDimension('lat', lat);
+rdn_out_nc.createDimension('wl', bands);
+
+# create varaibles
+lonvar = rdn_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
+latvar = rdn_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
+bins = rdn_out_nc.createVariable('wl','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
+
+# write output
+rdn_var = rdn_out_nc.createVariable('Radiance','float32',('lon','lat','wl'));
+rdn_var.setncattr('units','W sr-1 m-2');
+rdn_var[:] = lpj_rdn; 
+rdn_out_nc.close();
+
+if mode =='hypertrace':
+    rtr_out = join(output_dir, 'lpj-prosail_levelE_retrieved-HDR_' + version + '_' + str(month) + '_' + str(year) +'.nc');
+    rtr_out_nc = nc.Dataset(rtr_out, 'a');
 
     # create dimensions
-    rdn_out_nc.createDimension('lon', lon);
-    rdn_out_nc.createDimension('lat', lat);
-    rdn_out_nc.createDimension('wavelength', bands);
+    rtr_out_nc.createDimension('lon', lon);
+    rtr_out_nc.createDimension('lat', lat);
+    rtr_out_nc.createDimension('wl', bands);
 
-    # create varaibles
-    lonvar = rdn_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
-    latvar = rdn_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
-    bins = rdn_out_nc.createVariable('Bands','float64',('wavelength')); bins.setncattr('units', 'nm_from_400-2500nm'); bins[:] = wl;
+    # create varaibles  
+    lonvar = rtr_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
+    latvar = rtr_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
+    bins = rtr_out_nc.createVariable('wl','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
 
-    # write output
-    rdn_var = rdn_out_nc.createVariable('Radiance','float32',('lat','lon','wavelength'));
-    rdn_var.setncattr('units','W sr-1 m-2');
-    rdn_var[:] = lpj_rdn; 
-    rdn_out_nc.close();
-
-    if mode =='hypertrace':
-        rtr_out = join(output_dir, 'Retrievals', 'lpj-prosail_levelE_retrieved-HDR_' + version + '_' + str(month) + '_' + str(year) +'.nc');
-        rtr_out_nc = nc.Dataset(rtr_out, 'a');
-
-        # create dimensions
-        rtr_out_nc.createDimension('lon', lon);
-        rtr_out_nc.createDimension('lat', lat);
-        rtr_out_nc.createDimension('wavelength', bands);
-
-        # create varaibles for Radiance
-        lonvar = rtr_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
-        latvar = rtr_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
-        bins = rtr_out_nc.createVariable('Bands','float64',('wavelength')); bins.setncattr('units', 'nm_from_400-2500nm'); bins[:] = wl;
-
-        # write output for Radiance
-        rtr_var = rtr_out_nc.createVariable('Reflectance','float32',('lat','lon','wavelength'));
-        rtr_var.setncattr('units','fraction');
-        rtr_var[:] = lpj_rtr; 
-        rtr_out_nc.close();        
+    # write output  
+    rtr_var = rtr_out_nc.createVariable('HDR','float32',('lon','lat','wl'));
+    rtr_var.setncattr('units','unitless');
+    rtr_var[:] = lpj_rtr; 
+    rtr_out_nc.close();        
 
 ## end outfiletype conditional ---------------------------------------
 
