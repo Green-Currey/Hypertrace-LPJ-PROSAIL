@@ -56,7 +56,6 @@ print('Reflectance file: ', reflectance_file)
 print('MERRA2 dir:       ', merra_dir)
 print('Output dir:       ', output_dir)
 print('Month:            ', month)
-print('Output file type: ', outfiletype)
 print('Run mode:         ', mode) 
 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -210,7 +209,6 @@ if mode =='hypertrace':
     rtr_var[:] = lpj_rtr; 
     rtr_out_nc.close();        
 
-## end outfiletype conditional ---------------------------------------
 
 print('finished processing ', reflectance_file);
 if mode == 'hypertrace': 

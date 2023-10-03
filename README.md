@@ -1,8 +1,9 @@
 # Hypertrace-LPJ-PROSAIL
 Implementation of the forward and backwards ISOFIT routine on LPJ-PROSAIL data.
 
-
 ## Pipeline:
+To run, enter **sh _scripts/LPJ_hypertrace_routine.sh_**
+
 1. _LPJ_hypertrace_routine.sh_ calls:
     1. _MERRA2/getMerra2-lsm_AOD_H2O_singleyear.sh_ 
             - _Extracts the MERRA2 AOT and H2O values for the atm correction._
