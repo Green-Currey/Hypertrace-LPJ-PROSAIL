@@ -22,7 +22,7 @@ To run, enter **sh _scripts/LPJ_hypertrace_routine.sh_**
         - This merges the monthly files and modifies the metadata. This is launched after all other jobs with the same name have finished, ensuring that it runs last using '--dependency=singleton'
 **NOTE**: This process takes ~3 hours to run.
 
-## If used anywhere other than Discover, the following files need to be changed:
+## If used anywhere other than /nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/ on Discover, the following files need to be changed:
 1. _/configs/LPJ_basic_config.json_
 2. _/surface/LPJ_basic_surface.json_
 3. _/scripts/LPJ_hypertrace_routine.sh_
