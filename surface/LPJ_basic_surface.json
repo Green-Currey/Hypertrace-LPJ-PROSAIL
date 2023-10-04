@@ -6,7 +6,7 @@
     "sources":
     [
         {
-            "input_spectrum_files":["/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/surface_model_ucsb"],
+            "input_spectrum_files":["/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/surface/ecostress_library_with_mixtures"],
             "n_components": 8,
             "windows": [
                 {

@@ -8,7 +8,7 @@
 
             "instrument": {
                 "wavelength_file": "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/data/LPJ_wavelengths.txt",
-                "SNR": 400,
+                "SNR": 800,
                 "integrations":1,
                 "unknowns": {
                     "uncorrelated_radiometric_uncertainty": 0.01
