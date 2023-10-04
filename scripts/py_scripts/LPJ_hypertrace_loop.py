@@ -84,14 +84,11 @@ var = nameComps[2];                                     # reflectance variable
 version = nameComps[3];                                 # data version
 print("Reflectance: ", var, "\nVersion: ", version, "\nMonth: ", month, "\nYear: ", year);    
 
+# Create variable names
+rdn_name = 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc';
+rtr_name = 'lpj-prosail_levelE_retrieved-HDR_' + version + '_' + str(month) + '_' + str(year) +'.nc';
 
-
-# check if file exists ---------------------------------------------
-rdn_name = 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc'
-
-if os.path.exists(join(output_dir, rdn_name)):
-    print(rdn_name, "file already exists.")
-
+# open reflectance data ---------------------------------------------
 
 lpj = xr.open_dataset(reflectance_file, decode_times=False).sel(time=int(month)-1)
 wl = lpj.wl.values; # wavelengths
@@ -117,20 +114,21 @@ rfl = np.nan_to_num(rfl);
 
 # match shape for radiance and retrievals 
 rdn = rfl.copy().reshape([lat*lon, bands]);
-if mode =='hypertrace': 
-    rtr = rfl.copy().reshape([lat*lon, bands]);
+#if mode =='hypertrace': 
+rtr = rfl.copy().reshape([lat*lon, bands]);
 
 # extract cells gt zero
 cells = rfl[:,-1]>0;                                # probably a better way to check for this (maybe row sums?)
 rfl = rfl[cells,:];
 rdn2 = rdn[cells,:];
-if mode =='hypertrace': 
-    rtr2 = rtr[cells,:];
+#if mode =='hypertrace': 
+rtr2 = rtr[cells,:];
 aod = aod[cells];
 h2o = h2o[cells];
 aod[aod==0]=0.01;
 h2o[h2o==0]=0.1;
-
+aod[aod>6.5]=6.5;
+h2o[h2o>2.0]=2.0;
 
 
 ## data processing ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,10 +144,10 @@ for i in range(rfl.shape[0]):
     rdn2[i,:] = fm.calc_rdn(statevector, geom);
         
     # inverse to retrievals (only in 'hypertrace' mode)
-    if mode=='hypertrace':
-        rtr2[i,:] = iv.forward_uncertainty(
-                iv.invert(rdn2[i,:], geom)[-1],     # inverts the radiance and uncertainties
-                rdn2[i,:], geom)[0];                # from radiances, obtains retrievals
+    #if mode=='hypertrace':
+    rtr2[i,:] = iv.forward_uncertainty(
+            iv.invert(rdn2[i,:], geom)[-1],     # inverts the radiance and uncertainties
+            rdn2[i,:], geom)[0];                # from radiances, obtains retrievals
     
     if i%10000==0: 
         print('finished %i percent' % ((i+1)/rfl.shape[0]*100));
@@ -157,61 +155,58 @@ for i in range(rfl.shape[0]):
 
 # add back in new data and reshape
 rdn[cells,:]=rdn2;
-lpj_rdn = rdn.reshape([lat,lon,bands])
-if mode =='hypertrace': 
-    rtr[cells,:]=rtr2;
-    lpj_rtr = rtr.reshape([lat,lon,bands]);
+lpj_rdn = rdn.reshape([lat,lon,bands]).transpose(1,0,2);
+#if mode =='hypertrace': 
+rtr[cells,:]=rtr2;
+lpj_rtr = rtr.reshape([lat,lon,bands]).transpose(1,0,2);
 
 
 
 ## Exporting resulting data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# rdn name: lpj-prosail_levelD_TOA-radiance_version3a_m_2021.nc
-# rtr name: lpj-prosail_levelE_retrieved-HDR_version3a_m_2021.nc
-
 
 # output ncdf -----------------------------------------------
-rdn_out = join(output_dir, 'lpj-prosail_levelD_TOA-radiance_' + version + '_' + str(month) + '_' + str(year) +'.nc');
+rdn_out = join(output_dir, rdn_name); 
 rdn_out_nc = nc.Dataset(rdn_out, 'a'); 
 
 # create dimensions
 rdn_out_nc.createDimension('lon', lon);
 rdn_out_nc.createDimension('lat', lat);
-rdn_out_nc.createDimension('wl', bands);
+rdn_out_nc.createDimension('wavelength', bands);
 
 # create varaibles
 lonvar = rdn_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
 latvar = rdn_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
-bins = rdn_out_nc.createVariable('wl','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
+bins = rdn_out_nc.createVariable('wavelength','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
 
 # write output
-rdn_var = rdn_out_nc.createVariable('Radiance','float32',('lon','lat','wl'));
+rdn_var = rdn_out_nc.createVariable('Radiance','float32',('lon','lat','wavelength'));
 rdn_var.setncattr('units','W sr-1 m-2');
 rdn_var[:] = lpj_rdn; 
 rdn_out_nc.close();
 
-if mode =='hypertrace':
-    rtr_out = join(output_dir, 'lpj-prosail_levelE_retrieved-HDR_' + version + '_' + str(month) + '_' + str(year) +'.nc');
-    rtr_out_nc = nc.Dataset(rtr_out, 'a');
+#if mode=='hypertrace':
+rtr_out = join(output_dir, rtr_name);
+rtr_out_nc = nc.Dataset(rtr_out, 'a');
 
-    # create dimensions
-    rtr_out_nc.createDimension('lon', lon);
-    rtr_out_nc.createDimension('lat', lat);
-    rtr_out_nc.createDimension('wl', bands);
+# create dimensions
+rtr_out_nc.createDimension('lon', lon);
+rtr_out_nc.createDimension('lat', lat);
+rtr_out_nc.createDimension('wavelength', bands);
 
-    # create varaibles  
-    lonvar = rtr_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
-    latvar = rtr_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
-    bins = rtr_out_nc.createVariable('wl','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
+# create varaibles  
+lonvar = rtr_out_nc.createVariable('lon','float32',('lon')); lonvar.setncattr('units', 'Degrees East'); lonvar[:] = lpj.lon.values;
+latvar = rtr_out_nc.createVariable('lat','float32',('lat')); latvar.setncattr('units', 'Degrees North'); latvar[:] = lpj.lat.values;
+bins = rtr_out_nc.createVariable('wavelength','float32',('wavelength')); bins.setncattr('units', 'nanometers'); bins[:] = wl;
 
-    # write output  
-    rtr_var = rtr_out_nc.createVariable('HDR','float32',('lon','lat','wl'));
-    rtr_var.setncattr('units','unitless');
-    rtr_var[:] = lpj_rtr; 
-    rtr_out_nc.close();        
+# write output  
+rtr_var = rtr_out_nc.createVariable('HDR','float32',('lon','lat','wavelength'));
+rtr_var.setncattr('units','unitless');
+rtr_var[:] = lpj_rtr; 
+rtr_out_nc.close();        
 
 
 print('finished processing ', reflectance_file);
-if mode == 'hypertrace': 
+if mode=='hypertrace': 
     print('Hypertrace turned on. Retrieved HDR returned');
 else: 
     print('Only TOA radiances created.');

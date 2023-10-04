@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#SBATCH --job-name=Hyper12
 # Execute hypertrace for each month, as its own job.
 
 #---------------------------------------
@@ -9,7 +8,7 @@
 module load  anaconda/py3.9 
 
 export isofit_scripts='/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/scripts/'
-export year=2016
+export year=2020
 export stream='DR'
 export sims='lpj_prosail_v21'
 export version='Version021'
@@ -28,20 +27,12 @@ sh $hypertraceDir/MERRA2/getMerra2-lsm_AOD_H2O_singleyear.sh
 
 for ((month=1; month <=12; month+=1)); do
 
-    if [[ $month == 12 ]]; then
-        
-        sed -i "3s|.*|#SBATCH --job-name=Hyper$month|" ${isofit_scripts}/execute_LPJ_hypertrace.sh
-        jobid=$(sbatch --parsable ${isofit_scripts}/execute_LPJ_hypertrace.sh $month)
-
-    else
-
-        sed -i "3s|.*|#SBATCH --job-name=Hyper$month|" ${isofit_scripts}/execute_LPJ_hypertrace.sh
-        sbatch ${isofit_scripts}/execute_LPJ_hypertrace.sh $month
+    sed -i "3s|.*|#SBATCH --job-name=HT$year|" ${isofit_scripts}/execute_LPJ_hypertrace.sh
+    sbatch ${isofit_scripts}/execute_LPJ_hypertrace.sh $month
     
-    fi
-
 done
 
 # cdo merge...
 
-sbatch --dependency=afterok:$jobid $isofit_scripts/hypertrace_merge.sh
+sed -i "3s|.*|#SBATCH --job-name=HT$year|" ${isofit_scripts}/hypertrace_merge.sh
+sbatch --dependency=singleton $isofit_scripts/hypertrace_merge.sh

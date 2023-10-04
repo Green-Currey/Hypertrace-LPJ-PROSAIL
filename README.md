@@ -25,3 +25,4 @@ To run, enter **sh _scripts/LPJ_hypertrace_routine.sh_**
 2. Use MODTRAN LUT.
 3. Use SBG instrument file.
 4. Don't cap Merra2 data based on LUT -> create larger LUT.
+5. Improve metadata and data writing to netcdf in python script (add metadata, convert to int, etc).
