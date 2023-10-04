@@ -1,8 +1,9 @@
 # Hypertrace-LPJ-PROSAIL
 ### Implementation of the forward and backward ISOFIT routine on LPJ-PROSAIL data.
-This procedure takes a 12-month LPJ-PROSAIL reflectance NetCDF and outputs 12-month TOA Radiance and Retrieval-HDR NetCDFs.
+This procedure takes a 12-month LPJ-PROSAIL reflectance NetCDF and outputs 12-month TOA Radiance and Retrieval-HDR NetCDFs. 
 
 
+Diagram for this process:
 <img src="https://github.com/Green-Currey/Hypertrace-LPJ-PROSAIL/assets/57914237/dfaaa590-c257-4782-ba38-53b23e2a158d" alt="image" width="500"/>
 
 
