@@ -1,14 +1,14 @@
 {    
     "general_options": {
         "n_cores": 8,
-            "ray_temp_dir": "/tmp/ray"
+            "ray_temp_dir": "/discover/nobackup/bcurrey/tmp/ray/"
     },
 
         "forward_model": {
 
             "instrument": {
                 "wavelength_file": "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/data/LPJ_wavelengths.txt",
-                "SNR": 800,
+                "SNR": 400,
                 "integrations":1,
                 "unknowns": {
                     "uncorrelated_radiometric_uncertainty": 0.01
@@ -64,8 +64,8 @@
                         "month": 7,
                         "day": 15,
                         "irradiance_file":         "/discover/nobackup/projects/SBG-DO/isofit-commons/isofit/examples/20151026_SantaMonica/data/prism_optimized_irr.dat",
-                        "engine_base_dir":         "/discover/nobackup/projects/SBG-DO/isofit-commons/6sV-2.1",
-                        "lut_path":                "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/lut",
+                        "engine_base_dir":         "/discover/nobackup/projects/SBG-DO/isofit-commons/6sV-2.1/",
+                        "lut_path":                "/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/lut/",
                         "lut_names": ["H2OSTR", "AOT550"]
                     }
                 }
