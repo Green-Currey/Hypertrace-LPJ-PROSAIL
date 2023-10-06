@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=HT2015
-#SBATCH --time=00:29:00
+#SBATCH --job-name=HT2016
+#SBATCH --time=01:59:00
 #SBATCH --account=s3673
 #SBATCH --mail-user brycecurrey93@gmail.com
 #SBATCH --mail-type=ALL
@@ -26,8 +26,9 @@ mv $ncdfs/lpj-prosail_levelE_retrieved-HDR_${version}_*_${year}.nc $tmp/.
 
 # cat the individual files
 echo -e "Concatenate monthly files into annual file"
-cdo cat $tmp/lpj-prosail_levelD_TOA-radiance_${version}_*_${year}.nc $tmp/temp_rad1.nc
-cdo cat $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_*_${year}.nc $tmp/temp_rtr1.nc
+cdo cat $tmp/lpj-prosail_levelD_TOA-radiance_${version}_1_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_2_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_3_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_4_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_5_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_6_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_7_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_8_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_9_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_10_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_11_${year}.nc $tmp/lpj-prosail_levelD_TOA-radiance_${version}_12_${year}.nc $tmp/temp_rad1.nc
+
+cdo cat $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_1_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_2_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_3_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_4_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_5_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_6_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_7_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_8_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_9_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_10_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_11_${year}.nc $tmp/lpj-prosail_levelE_retrieved-HDR_${version}_12_${year}.nc $tmp/temp_rtr1.nc
 
 # mult by scale factor
 echo -e "Add scaling factors"

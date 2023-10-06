@@ -1,7 +1,7 @@
 {    
     "general_options": {
         "n_cores": 8,
-            "ray_temp_dir": "/discover/nobackup/bcurrey/tmp/ray/"
+            "ray_temp_dir": "~/tmp/ray/"
     },
 
         "forward_model": {
