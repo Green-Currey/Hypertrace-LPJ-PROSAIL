@@ -8,7 +8,7 @@
 module load  anaconda/py3.9 
 
 export isofit_scripts='/discover/nobackup/bcurrey/Hypertrace-LPJ-PROSAIL/scripts/'
-export year=2016
+export year=2022
 export stream='DR'
 export sims='lpjv21'
 export version='Version021'

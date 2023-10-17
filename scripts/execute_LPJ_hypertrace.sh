@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=HT2016
+#SBATCH --job-name=HT2022
 #SBATCH --time=02:59:00
 #SBATCH --account=s3673
 # #SBATCH --mail-user brycecurrey93@gmail.com
