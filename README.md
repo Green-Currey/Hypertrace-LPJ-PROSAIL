@@ -28,8 +28,9 @@ To run, enter **sh _scripts/LPJ_hypertrace_routine.sh_**
 3. _/scripts/LPJ_hypertrace_routine.sh_
 
 ## TO DO/Improvements:
-1. Change _getMerra2-lsm_AOD_H2O_singleyear.sh_ to extract the MERRA2 data from the nearest to the overpass time (11:00).
-2. Use MODTRAN LUT.
-3. Use SBG instrument file.
-4. Don't cap Merra2 data based on LUT -> create larger LUT.
-5. Improve metadata and data writing to netcdf in Python script (add metadata, convert to int, etc.).
+- Change _getMerra2-lsm_AOD_H2O_singleyear.sh_ to extract the MERRA2 data from the nearest to the overpass time (11:00).
+- Use MODTRAN LUT
+- Use SBG instrument file.
+- Don't cap Merra2 data based on LUT -> create larger LUT.
+- Improve metadata and data writing to netcdf in Python script (add metadata, convert to int, etc.).
+- Modify dimensions so they match reflectances
